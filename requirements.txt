@@ -1,0 +1,16 @@
+# Python libraries required for this project.
+
+# general
+datetime
+pandas
+
+# tweet_data
+twint
+time
+os
+
+# emotion_data
+jellyfish
+
+# graphing
+plotly
