@@ -51,7 +51,7 @@ def date_to_row(data: pandas.DataFrame, processed_data: pandas.DataFrame, csv: b
 
 
 def process_data() -> pandas.DataFrame:
-    """Returns processed_covid_data as a DataFrame.
+    """Returns processed_covid_data.csv as a DataFrame.
     """
     return pandas.read_csv('processed_covid_data.csv')
 
