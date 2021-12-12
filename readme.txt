@@ -1,3 +1,5 @@
+Data Sources
+
 NRC Word-Emotion Association Lexicon (NRC Emotion Lexicon)
 Version 0.92
 10 July 2011
