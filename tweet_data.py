@@ -19,14 +19,14 @@ def to_twint(date: datetime) -> str:
     return date.strftime('%Y-%m-%d')
 
 
-def to_datetime(date: str) -> datetime: # CALLED TO FIND END_DATE.
+def to_datetime(date: str) -> datetime:
     """Returns a date in Twitter format as datetime.
 
     >>> to_datetime('2021-01-02')
     datetime.datetime(2021, 1, 2, 23, 59)
     """
-    if '23:59:00' not in date:
-        date += ' 23:59:00'
+    if '23:59' not in date:
+        date += ' 23:59'
     return datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
 
 
