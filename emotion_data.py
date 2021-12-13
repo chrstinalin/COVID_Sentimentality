@@ -7,7 +7,7 @@ import datetime
 import pandas
 
 
-def get_lexicon_data(filename: str) -> dict[str, dict]:
+def get_lexicon_data(filename: str) -> pandas.DataFrame:
     """Retrieves the NRC Emotion Lexicon and creates a dictionary mapping each word to
     a dictionary mapping emotions to its value.
     """
@@ -20,7 +20,9 @@ def get_lexicon_data(filename: str) -> dict[str, dict]:
             words_indices[word] = {}
         words_indices[word][emotion] = value
 
-    return words_indices
+    df = pandas.DataFrame.from_dict(words_indices)
+    df.index.name = 'emotion'
+    return df
 
 
 def clean_text(text: str) -> list[str]:
@@ -29,46 +31,56 @@ def clean_text(text: str) -> list[str]:
     return ''.join(char for char in text if char.isalpha() or char == ' ').split()
 
 
-def daily_average_emotions(tweet_tuple: tuple[datetime, list[str]]) -> \
+def daily_average_emotions(tweet_tuple: tuple[datetime, list[str]], lexicon_data: pandas.DataFrame) -> \
         tuple[datetime, dict[str, float]]:
     """Return a dictionary mapping the day of the tweets to another dictionary mapping emotions to
     a sum of its average values in the tweets. The average (per tweet) is calculated by dividing the
     values of each emotion by the total number of words in the tweet.
     """
-    lexicon_data = get_lexicon_data('NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
     day, tweets = tweet_tuple
-    word_lexicon = {}
+    check_winkler = {}
 
     emotion_lexicon = (day, {'anger': 0, 'anticipation': 0, 'disgust': 0, 'fear': 0, 'joy': 0,
                              'negative': 0, 'positive': 0, 'sadness': 0, 'surprise': 0, 'trust': 0})
 
     for tweet in tweets:
         for word in clean_text(tweet):
-
-            if word in lexicon_data:
-                word_lexicon = lexicon_data[word]
+            if word in lexicon_data.columns:
+                for emotion in emotion_lexicon[1].keys():
+                    emotion_lexicon[1][emotion] += lexicon_data[word][emotion]
             else:
-                for word_in_lexicon_data in lexicon_data:
-                    if jaro_winkler(word_in_lexicon_data, word) > 0.80:
-                        word_lexicon = lexicon_data[word_in_lexicon_data]
+                if word not in check_winkler:
+                    check_winkler[word] = 0
+                check_winkler[word] += 1
 
-            for key in word_lexicon:
-                emotion_lexicon[1][key] += word_lexicon[key]
+    for lexicon_word in lexicon_data.columns:
+        to_pop = []
+        for word in check_winkler:
+            if jaro_winkler(lexicon_word, word) > 0.90:
+                for emotion in emotion_lexicon[1].keys():
+                    emotion_lexicon[1][emotion] += lexicon_data[lexicon_word][emotion] * check_winkler[word]
+                to_pop.append(word)
+        for word in to_pop:
+            check_winkler.pop(word)
 
     return emotion_lexicon
 
 
-def total_average_emotions_per_tweet(tweets: tuple[datetime, list[tuple[datetime, list[str]]]]) -> \
+def total_average_emotions_per_tweet(tweets: tuple[datetime, list[tuple[datetime, list[str]]]], save: bool) -> \
         dict[str, dict[str, float]]:
     """Return a dictionary mapping a day of the week to a dictionary mapping emotions to
     its value from the tweets of that day.
     """
+    lexicon_data = get_lexicon_data('NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
     _, list_of_day_tuples = tweets
     week_to_emotion = {}
 
     for day_tuple in list_of_day_tuples:
-        day, value = daily_average_emotions(day_tuple)
+        day, value = daily_average_emotions(day_tuple, lexicon_data)
         week_to_emotion[to_twint(day)] = value
+
+    if save:
+        save_to_raw_data(week_to_emotion)
 
     return week_to_emotion
 
