@@ -31,11 +31,10 @@ def clean_text(text: str) -> list[str]:
     return ''.join(char for char in text if char.isalpha() or char == ' ').split()
 
 
-def daily_average_emotions(tweet_tuple: tuple[datetime, list[str]], lexicon_data: pandas.DataFrame) -> \
+def daily_emotions(tweet_tuple: tuple[datetime, list[str]], lexicon_data: pandas.DataFrame) -> \
         tuple[datetime, dict[str, float]]:
-    """Return a dictionary mapping the day of the tweets to another dictionary mapping emotions to
-    a sum of its average values in the tweets. The average (per tweet) is calculated by dividing the
-    values of each emotion by the total number of words in the tweet.
+    """Return a dictionary mapping a single day of the tweets to another dictionary mapping emotions to
+    a sum of its average values in the tweets.
     """
     day, tweets = tweet_tuple
     check_winkler = {}
@@ -66,9 +65,9 @@ def daily_average_emotions(tweet_tuple: tuple[datetime, list[str]], lexicon_data
     return emotion_lexicon
 
 
-def total_average_emotions_per_tweet(tweets: tuple[datetime, list[tuple[datetime, list[str]]]], save: bool) -> \
+def total_emotions(tweets: tuple[datetime, list[tuple[datetime, list[str]]]], save: bool) -> \
         dict[str, dict[str, float]]:
-    """Return a dictionary mapping a day of the week to a dictionary mapping emotions to
+    """Return a dictionary mapping the days of the tweets to a dictionary mapping emotions to
     its value from the tweets of that day.
     """
     lexicon_data = get_lexicon_data('NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
