@@ -66,7 +66,7 @@ def retrieve_day_tweets(date: datetime) -> tuple[datetime, list]:
 )
 def retrieve_new_tweets(n: int, start_date: datetime, save: bool) -> tuple[datetime, list[tuple[datetime, list]]]:
     """Returns n days' worth of tweets. Saves the results to a csv when save is True.
-    Tuple maps the end of the week to (date, list of tweets).
+    Tuple maps the start of the week to (date, list of tweets).
     """
     current_date = start_date
     week_so_far = []
