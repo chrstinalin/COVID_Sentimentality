@@ -1,4 +1,4 @@
-Created by Christina Lin, Victor Yao, Gabriela Jang, Philos Reaksa Himm
+Created by Christina Lin, Victor Yao, Gabriela Jang, and Philos Reaksa Himm.
 
 Data Sources
 
