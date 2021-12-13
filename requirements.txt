@@ -7,7 +7,7 @@ pandas
 # tweet_data
 twint
 time
-os
+backoff
 
 # emotion_data
 jellyfish
