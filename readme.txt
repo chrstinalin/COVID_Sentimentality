@@ -1,3 +1,5 @@
+Created by Christina Lin, Victor Yao, Gabriela Jang, Philos Reaksa Himm
+
 Data Sources
 
 NRC Word-Emotion Association Lexicon (NRC Emotion Lexicon)
