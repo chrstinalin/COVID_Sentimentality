@@ -2,6 +2,7 @@
 Code for calculating the emotional index of tweets.
 """
 from jellyfish import jaro_winkler_similarity as jaro_winkler
+from tweet_data import to_twint
 import datetime
 import pandas
 
@@ -29,7 +30,7 @@ def clean_text(text: str) -> list[str]:
 
 
 def daily_average_emotions(tweet_tuple: tuple[datetime, list[str]]) -> \
-                           tuple[datetime, dict[str, float]]:
+        tuple[datetime, dict[str, float]]:
     """Return a dictionary mapping the day of the tweets to another dictionary mapping emotions to
     a sum of its average values in the tweets. The average (per tweet) is calculated by dividing the
     values of each emotion by the total number of words in the tweet.
@@ -58,7 +59,7 @@ def daily_average_emotions(tweet_tuple: tuple[datetime, list[str]]) -> \
 
 
 def total_average_emotions_per_tweet(tweets: tuple[datetime, list[tuple[datetime, list[str]]]]) -> \
-        dict[datetime, dict[str, float]]:
+        dict[str, dict[str, float]]:
     """Return a dictionary mapping a day of the week to a dictionary mapping emotions to
     its value from the tweets of that day.
     """
@@ -67,6 +68,21 @@ def total_average_emotions_per_tweet(tweets: tuple[datetime, list[tuple[datetime
 
     for day_tuple in list_of_day_tuples:
         day, value = daily_average_emotions(day_tuple)
-        week_to_emotion[day] = value
+        week_to_emotion[to_twint(day)] = value
 
     return week_to_emotion
+
+
+def save_to_raw_data(data: dict[str, dict[str, float]]) -> None:
+    """ Saves calculated emotional indices to tweet_emotional_index.csv.
+    """
+    df = pandas.DataFrame.from_dict(data)
+    df.index.name = 'emotion'
+    # noinspection PyTypeChecker
+    df.to_csv('tweet_emotional_index.csv')
+
+
+def pull_from_raw_data() -> dict[str, dict[str, float]]:
+    """ Returns the data in tweet_emotional_index.csv.
+    """
+    return pandas.read_csv('tweet_emotional_index.csv').set_index('emotion').to_dict()
