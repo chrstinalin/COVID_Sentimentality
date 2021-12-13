@@ -64,11 +64,11 @@ def retrieve_day_tweets(date: datetime) -> tuple[datetime, list]:
     twint.token.RefreshTokenException,
     max_tries=10
 )
-def retrieve_new_tweets(n: int, end_date: datetime, save: bool) -> tuple[datetime, list[tuple[datetime, list]]]:
+def retrieve_new_tweets(n: int, start_date: datetime, save: bool) -> tuple[datetime, list[tuple[datetime, list]]]:
     """Returns n days' worth of tweets. Saves the results to a csv when save is True.
     Tuple maps the end of the week to (date, list of tweets).
     """
-    current_date = end_date
+    current_date = start_date
     week_so_far = []
 
     for _ in range(n):
@@ -76,12 +76,12 @@ def retrieve_new_tweets(n: int, end_date: datetime, save: bool) -> tuple[datetim
         while day_tweets[1] == []:
             day_tweets = retrieve_day_tweets(current_date)
         week_so_far.append(day_tweets)
-        current_date -= timedelta(days=1)
+        current_date += timedelta(days=1)
 
     if save:
         save_to_raw_data(week_so_far)
 
-    return (end_date, week_so_far)
+    return (start_date, week_so_far)
 
 
 def save_to_raw_data(data: list[tuple[datetime, list]]) -> None:
