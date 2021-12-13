@@ -91,8 +91,9 @@ def save_to_raw_data(data: list[tuple[datetime, list]]) -> None:
     pandas.DataFrame(data, columns=['date', 'tweets']).to_csv('twitter_data.csv', index=False)
 
 
-def pull_from_raw_data() -> list[tuple[datetime, list]]:
+def pull_from_raw_data() -> tuple[datetime, list[tuple[datetime, list]]]:
     """ Returns the data in twitter_data.csv.
     """
     data = pandas.read_csv('twitter_data.csv').values.tolist()
-    return [(to_datetime(pair[0]), literal_eval(pair[1])) for pair in data]
+    return (to_datetime(data[0][0]),
+            [(to_datetime(pair[0]), literal_eval(pair[1])) for pair in data])
