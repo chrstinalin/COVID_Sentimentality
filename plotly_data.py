@@ -19,7 +19,7 @@ def get_emotion(start_date: datetime, end_date: datetime) -> dict:
     """
     num_days = (end_date - start_date).days
     data = td.retrieve_new_tweets(num_days + 1, start_date, False)
-    tweet_data = ed.total_average_emotions_per_tweet(data, False)
+    tweet_data = ed.total_emotions(data, False)
     return tweet_data
 
 
