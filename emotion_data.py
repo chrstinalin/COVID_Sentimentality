@@ -33,8 +33,8 @@ def clean_text(text: str) -> list[str]:
 
 def daily_emotions(tweet_tuple: tuple[datetime, list[str]], lexicon_data: pandas.DataFrame) -> \
         tuple[datetime, dict[str, float]]:
-    """Return a dictionary mapping a single day of the tweets to another dictionary mapping emotions to
-    a sum of its average values in the tweets.
+    """Return a dictionary mapping a single day of tweets to another dictionary mapping emotions to
+    the sum of its value in the tweets.
     """
     day, tweets = tweet_tuple
     check_winkler = {}
@@ -75,7 +75,7 @@ def total_emotions(tweets: tuple[datetime, list[tuple[datetime, list[str]]]], sa
     week_to_emotion = {}
 
     for day_tuple in list_of_day_tuples:
-        day, value = daily_average_emotions(day_tuple, lexicon_data)
+        day, value = daily_emotions(day_tuple, lexicon_data)
         week_to_emotion[to_twint(day)] = value
 
     if save:
