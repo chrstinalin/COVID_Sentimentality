@@ -15,7 +15,7 @@ def graph_date_range(start: str, end: str) -> None:
 
     Preconditions:
         - start and end are in format YYYY-MM-DD.
-        - to_datetime('2020-01-01') <= to_datetime(start) < to_datetime(end) < datetime.today()
+        - to_datetime('2020-03-01') <= to_datetime(start) < to_datetime(end) < datetime.today()
 
     """
     pd.draw_input_graph(to_datetime(start), to_datetime(end))
@@ -34,7 +34,7 @@ def update(n: int, start: str) -> None:
 
         Preconditions:
         - start is in format YYYY-MM-DD.
-        - to_datetime('2020-01-01') <= to_datetime(start) <
+        - to_datetime('2020-03-01') <= to_datetime(start) <
           to_datetime(start) + timedelta(days=n) < datetime.today()
     """
     cd.update_processed_covid_data(cd.get_covid_data(), cd.process_data())
