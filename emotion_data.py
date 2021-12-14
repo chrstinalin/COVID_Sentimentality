@@ -55,7 +55,7 @@ def daily_emotions(tweet_tuple: tuple[datetime, list[str]], lexicon_data: pandas
     for lexicon_word in lexicon_data.columns:
         to_pop = []
         for word in check_winkler:
-            if jaro_winkler(lexicon_word, word) > 0.90:
+            if jaro_winkler(lexicon_word, word) > 0.87:
                 for emotion in emotion_lexicon[1].keys():
                     emotion_lexicon[1][emotion] += lexicon_data[lexicon_word][emotion] * check_winkler[word]
                 to_pop.append(word)
