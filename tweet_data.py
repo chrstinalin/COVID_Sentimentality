@@ -25,8 +25,8 @@ def to_datetime(date: str) -> datetime:
     >>> to_datetime('2021-01-02')
     datetime.datetime(2021, 1, 2, 23, 59)
     """
-    if '23:59' not in date:
-        date += ' 23:59'
+    if '23:59:00' not in date:
+        date += ' 23:59:00'
     return datetime.strptime(date, '%Y-%m-%d %H:%M:%S')
 
 
@@ -55,15 +55,10 @@ def retrieve_day_tweets(date: datetime) -> tuple[datetime, list]:
     twint.run.Search(twt)
 
     # Reformat
-    tweets = [tweet.tweet for tweet in raw_tweets]
+    tweets = [tweet.tweet for tweet in raw_tweets][:20]
     return (date, tweets)
 
 
-@backoff.on_exception(
-    backoff.expo,
-    twint.token.RefreshTokenException,
-    max_tries=10
-)
 def retrieve_new_tweets(n: int, start_date: datetime, save: bool) -> tuple[datetime, list[tuple[datetime, list]]]:
     """Returns n days' worth of tweets. Saves the results to a csv when save is True.
     Tuple maps the start of the week to (date, list of tweets).
