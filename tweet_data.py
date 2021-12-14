@@ -1,5 +1,7 @@
 """
 Code for retrieving and processing Tweets scraped from Twitter.
+
+© Christina Lin
 """
 from datetime import timedelta
 from datetime import datetime
@@ -21,6 +23,9 @@ def to_twint(date: datetime) -> str:
 
 def to_datetime(date: str) -> datetime:
     """Returns a date in Twitter format as datetime.
+
+    Preconditions:
+        - date != ''
 
     >>> to_datetime('2021-01-02')
     datetime.datetime(2021, 1, 2, 23, 59)
@@ -59,9 +64,13 @@ def retrieve_day_tweets(date: datetime) -> tuple[datetime, list]:
     return (date, tweets)
 
 
-def retrieve_new_tweets(n: int, start_date: datetime, save: bool) -> tuple[datetime, list[tuple[datetime, list]]]:
+def retrieve_new_tweets(n: int, start_date: datetime, save: bool) \
+        -> tuple[datetime, list[tuple[datetime, list]]]:
     """Returns n days' worth of tweets. Saves the results to a csv when save is True.
     Tuple maps the start of the week to (date, list of tweets).
+
+    Preconditions:
+        - n > 0
     """
     current_date = start_date
     week_so_far = []
@@ -81,6 +90,9 @@ def retrieve_new_tweets(n: int, start_date: datetime, save: bool) -> tuple[datet
 
 def save_to_raw_data(data: list[tuple[datetime, list]]) -> None:
     """ Saves retrieved tweets to twitter_data.csv.
+
+    Preconditions:
+        - data != []
     """
     # noinspection PyTypeChecker
     pandas.DataFrame(data, columns=['date', 'tweets']).to_csv('twitter_data.csv', index=False)

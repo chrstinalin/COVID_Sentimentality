@@ -1,5 +1,7 @@
 """
 Retrieves and filters the COVID-19 data from Ourworldindata.org.
+
+© Christina Lin and Philos Reaksa Himm
 """
 import pandas
 
@@ -13,13 +15,21 @@ def get_covid_data() -> pandas.DataFrame:
 
 def pretty(header: str) -> dict[str: str]:
     """Returns a header in a nicer format.
+
+    Preconditions:
+        - header != ''
     """
     return ' '.join(header.split('_')).title()
 
 
-def date_to_row(data: pandas.DataFrame, processed_data: pandas.DataFrame, csv: bool, overwrite: bool) -> dict:
+def date_to_row(data: pandas.DataFrame, processed_data: pandas.DataFrame,
+                csv: bool, overwrite: bool) -> dict:
     """Returns a dictionary mapping desired dates to each numerical column's value.
     if save_to_csv, saves the processed data.
+
+    Preconditions:
+        - data != pandas.DataFrame()
+        - processed_data != pandas.DataFrame()
     """
     h_type = dict(data.dtypes)
     dates_dict = {}
@@ -59,6 +69,9 @@ def process_data() -> pandas.DataFrame:
 def overwrite_processed_covid_data(data: pandas.DataFrame) -> dict:
     """ Fetches the newest version of the OWID Covid Data and overwrites the spreadsheet
         with newly processed values. Returns in dict format.
+
+    Preconditions:
+        - data != pandas.DataFrame()
     """
     return date_to_row(data, pandas.DataFrame(), csv=True, overwrite=True)
 
@@ -66,5 +79,9 @@ def overwrite_processed_covid_data(data: pandas.DataFrame) -> dict:
 def update_processed_covid_data(data: pandas.DataFrame, processed_data: pandas.DataFrame) -> dict:
     """Fetches the newest version of the OWID Covid Data and updates the processed spreadsheet
     with missing dates' values. Returns in dict format.
+
+    Preconditions:
+        - data != pandas.DataFrame()
+        - processed_data != pandas.DataFrame()
     """
     return date_to_row(data, processed_data, csv=True, overwrite=False)

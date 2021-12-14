@@ -1,15 +1,20 @@
 """
 Code for calculating the emotional index of tweets.
+
+© Christina Lin and Gabriela Jang
 """
-from jellyfish import jaro_winkler_similarity as jaro_winkler
-from tweet_data import to_twint
 import datetime
 import pandas
+from jellyfish import jaro_winkler_similarity as jaro_winkler
+from tweet_data import to_twint
 
 
 def get_lexicon_data(filename: str) -> pandas.DataFrame:
     """Retrieves the NRC Emotion Lexicon and creates a dictionary mapping each word to
     a dictionary mapping emotions to its value.
+
+    Preconditions:
+        - filename != ''
     """
     data = pandas.read_csv(filename, delim_whitespace=True, header=None)
     words_indices = {}
@@ -27,6 +32,9 @@ def get_lexicon_data(filename: str) -> pandas.DataFrame:
 
 def clean_text(text: str) -> list[str]:
     """Return text as a list of lowercase words excluding punctuation, numbers, and emojis.
+
+    Preconditions:
+        - text != ''
     """
     return ''.join(char for char in text if char.isalpha() or char == ' ').split()
 
@@ -35,6 +43,10 @@ def daily_emotions(tweet_tuple: tuple[datetime, list[str]], lexicon_data: pandas
         tuple[datetime, dict[str, float]]:
     """Return a dictionary mapping a single day of tweets to another dictionary mapping emotions to
     the sum of its value in the tweets.
+
+    Preconditions:
+        - tweet_tuple != tuple()
+        - lexicon_data != pandas.DataFrame()
     """
     day, tweets = tweet_tuple
     check_winkler = {}
@@ -45,7 +57,7 @@ def daily_emotions(tweet_tuple: tuple[datetime, list[str]], lexicon_data: pandas
     for tweet in tweets:
         for word in clean_text(tweet):
             if word in lexicon_data.columns:
-                for emotion in emotion_lexicon[1].keys():
+                for emotion in emotion_lexicon[1]:
                     emotion_lexicon[1][emotion] += lexicon_data[word][emotion]
             else:
                 if word not in check_winkler:
@@ -56,8 +68,9 @@ def daily_emotions(tweet_tuple: tuple[datetime, list[str]], lexicon_data: pandas
         to_pop = []
         for word in check_winkler:
             if jaro_winkler(lexicon_word, word) > 0.90:
-                for emotion in emotion_lexicon[1].keys():
-                    emotion_lexicon[1][emotion] += lexicon_data[lexicon_word][emotion] * check_winkler[word]
+                for emotion in emotion_lexicon[1]:
+                    emotion_lexicon[1][emotion] += \
+                        lexicon_data[lexicon_word][emotion] * check_winkler[word]
                 to_pop.append(word)
         for word in to_pop:
             check_winkler.pop(word)
@@ -69,6 +82,9 @@ def total_emotions(tweets: tuple[datetime, list[tuple[datetime, list[str]]]], sa
         dict[str, dict[str, float]]:
     """Return a dictionary mapping the days of the tweets to a dictionary mapping emotions to
     its value from the tweets of that day.
+
+    Preconditions:
+        - tweets != tuple()
     """
     lexicon_data = get_lexicon_data('NRC-Emotion-Lexicon-Wordlevel-v0.92.txt')
     _, list_of_day_tuples = tweets
@@ -86,6 +102,9 @@ def total_emotions(tweets: tuple[datetime, list[tuple[datetime, list[str]]]], sa
 
 def save_to_raw_data(data: dict[str, dict[str, float]]) -> None:
     """ Saves calculated emotional indices to tweet_emotional_index.csv.
+
+    Preconditions:
+        - data != {}
     """
     df = pandas.DataFrame.from_dict(data)
     df.index.name = 'emotion'

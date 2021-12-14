@@ -1,13 +1,15 @@
 """
 Functions to use the program.
+
+© Christina Lin
 """
-from tweet_data import retrieve_new_tweets
-from emotion_data import total_emotions
-from tweet_data import to_datetime
 from datetime import timedelta
 from datetime import datetime
 import plotly_data as pd
 import covid_data as cd
+from emotion_data import total_emotions
+from tweet_data import retrieve_new_tweets
+from tweet_data import to_datetime
 
 
 def graph_date_range(start: str, end: str) -> None:
@@ -28,8 +30,8 @@ def graph_csv() -> None:
 
 
 def update(n: int, start: str) -> None:
-    """ Updates OWID COVID-19 data and generates a new twitter_data.csv and tweet_emotional_index.csv
-    over n number of days starting from start_date.
+    """ Updates processed_covid_data.csv and generates a new twitter_data.csv and
+    tweet_emotional_index.csv over n number of days starting from start_date.
     Recommend attempting graph_csv() before attempting this function.
 
         Preconditions:
