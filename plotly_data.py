@@ -108,6 +108,7 @@ def draw_input_graph(start_date: datetime, end_date: datetime):
             secondary_y=False,
         )
 
+    fig.update_layout(title_text='Sentimentality vs. COVID-19 Statistics', title_x=0.5)
     fig.update_xaxes(title_text='Day')
     fig.update_yaxes(title_text=f'Covid Statistic', secondary_y=False)
     fig.update_yaxes(title_text=f'Emotion', secondary_y=True)
@@ -153,6 +154,7 @@ def draw_saved_graph() -> None:
         title_text='Sentimentality vs. COVID-19 Statistics'
     )
 
+    fig.update_layout(title_text='Sentimentality vs. COVID-19 Statistics', title_x=0.5)
     fig.update_xaxes(title_text='Day')
     fig.update_yaxes(title_text=f'Covid Statistic', secondary_y=False)
     fig.update_yaxes(title_text=f'Emotion', secondary_y=True)
