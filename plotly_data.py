@@ -2,13 +2,11 @@
 Code for retrieving specific emotions from dictionary of emotions over a period of time and graphing
 it with COVID data against time using plotly.
 """
-import plotly.express.colors as color
 from plotly.subplots import make_subplots
 import plotly.graph_objects as go
 import emotion_data as ed
 import tweet_data as td
 import covid_data as cd
-import pandas as pd
 import datetime
 
 emotions = ['anger', 'anticipation', 'disgust', 'fear', 'joy', 'negative', 'positive',
@@ -53,7 +51,6 @@ def get_emotion_from_file(chosen_emotion: str) -> list:
     emotion_by_day = []
     for date in emotion_data:
         emotion_by_day.append(emotion_data[date][chosen_emotion])
-
     return emotion_by_day
 
 
@@ -77,38 +74,39 @@ def get_covid_data(start_date: datetime, end_date: datetime, chosen_covid_data: 
     return covid_data_by_day
 
 
-def draw_input_graph(start_date: datetime, end_date: datetime, chosen_emotion: str, chosen_covid_data: str):
+def draw_input_graph(start_date: datetime, end_date: datetime):
     """Plots COVID and emotional data from start_date to end_date.
     """
     fig = make_subplots(specs=[[{'secondary_y': True}]])
     dates = get_desired_dates(start_date, end_date)
-    covid_data = get_covid_data(start_date, end_date, chosen_covid_data)
-    emotion_data = get_emotion_by_day(get_emotion(start_date, end_date), chosen_emotion)
+    emote = get_emotion(start_date, end_date)
 
-    fig.add_trace(
-        go.Scatter(
-            x=dates,
-            y=emotion_data,
-            name=f'{chosen_emotion.capitalize()}',
-            line=dict(width=6),
-            visible='legendonly'
-        ),
-        secondary_y=True,
-    )
+    # Emotion
+    for emotion in emotions:
+        emotion_data = get_emotion_by_day(emote, emotion)
+        fig.add_trace(
+            go.Scatter(
+                x=dates,
+                y=emotion_data,
+                name=f'{emotion.capitalize()}',
+                line=dict(width=6),
+                visible='legendonly'
+            ),
+            secondary_y=True,
+        )
 
-    fig.add_trace(
-        go.Bar(
-            x=dates,
-            y=covid_data,
-            name=f'{chosen_covid_data}',
-            visible='legendonly'
-        ),
-        secondary_y=False,
-    )
-
-    fig.update_layout(
-        title_text='Sentimentality vs. COVID-19 Statistics'
-    )
+    # COVID
+    for type in covid_data_types:
+        covid_data = get_covid_data(start_date, end_date, type)
+        fig.add_trace(
+            go.Bar(
+                x=dates,
+                y=covid_data,
+                name=f'{type}',
+                visible='legendonly'
+            ),
+            secondary_y=False,
+        )
 
     fig.update_xaxes(title_text='Day')
     fig.update_yaxes(title_text=f'Covid Statistic', secondary_y=False)
